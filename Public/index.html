@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Connect 4</title>
+
+        <link rel="stylesheet" href="connect4.css">
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="connect4.js"></script>
+    </head>
+
+    <body>
+        <h1>Connect 4!</h1>
+        <div>
+            <p id="userCont">You: <span id="user"></span></p>
+            <p id="oppNameCont">Opponent: <span id="oppName"></span></p>
+
+        </div>
+    <br>
+        
+        <p id="valueCont">You are player <span id="value"></span></p>
+        <br>
+        <p id="whosTurn">Red's Turn</p> <!--Red will always start first be default-->
+
+        <div>
+            <p id="enterName">Please enter your name: </p>
+            <input type="text" placeholder="Name" id="name" autocomplete="off">
+        </div>
+        <br>
+        <button id="find">Search for player two</button>
+
+        <h2 id="winner"></h2> <!--This will be implemented in js-->
+        <div id="board"></div>
+        <button id="restartBtn">Restart Game</button>
+    </body>
+</html>

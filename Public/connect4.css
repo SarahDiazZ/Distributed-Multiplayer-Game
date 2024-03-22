@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+#board {
+    /*Height and width of board*/
+    height: 540px;
+    width: 630px;
+
+    /*Colors of board*/
+    background-color: blue;
+    border: 10px solid navy;
+
+    /*Centers the board*/
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/*Controls the circles the chips go into*/
+.tile {
+    height: 70px;
+    width: 70px;
+    margin: 5px;
+
+    background-color: white;
+    border-radius: 50%;
+    border: 5px solid navy;
+}
+
+.red-chip {
+    background-color: red;
+}
+
+.yellow-chip {
+    background-color: yellow;
+}
+
+#restartBtn {
+    background-color: red;
+    color: white;
+    border: 3px solid red;
+    padding: 10px 24px;
+    margin-top: 10px;
+}
+
+#restartBtn:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+/*Animation*/
+@keyframes fall {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.falling {
+    animation: fall 0.5s ease forwards;
+}
