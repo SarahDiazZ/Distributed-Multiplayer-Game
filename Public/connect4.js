@@ -15,8 +15,6 @@ var curCols;
 var rows = 6;
 var cols = 7;
 
-let clientPlayer
-
 //When the page loads
 window.onload = function() {
     setGame();
@@ -45,8 +43,10 @@ window.onload = function() {
         }
     })
 
+    let clientPlayer
+
     socket.on("find", (e)=>{
-        let allPlayersArr=e.allPlayers
+        let allPlayersArr = e.allPlayers
 
         document.getElementById("board").style.display="flex"
         document.getElementById("userCont").style.display="block"
@@ -80,7 +80,7 @@ window.onload = function() {
         document.getElementById("oppName").innerText=oppName
 
         //user color
-        document.getElementById("value").innerText=colorValue
+        document.getElementById("colorValue").innerText=colorValue
 
     })
 }
@@ -111,10 +111,7 @@ function setChip() {
     if (gameOver) {
         return;
     }
-
-    if (clientPlayer != curPlayer) {
-        return;
-    }
+    
 
     let coor = this.id.split("-"); //"0-0" --> ["0", "0"]
     let r = parseInt(coor[0]);
@@ -129,13 +126,15 @@ function setChip() {
     let tile = document.getElementById(r.toString() + "-" + c.toString());
     tile.classList.add("falling", "rotating");
 
+    // let tileString = r.toString() + "-" + c.toString();
+
     if (curPlayer == pRed) {
         tile.classList.add("red-chip");
-        curPlayer = pYellow; //Makes chip alternate
+        // curPlayer = pYellow; //Makes chip alternate
     }
     else {
         tile.classList.add("yellow-chip");
-        curPlayer = pRed;
+        // curPlayer = pRed;
     }
     tile.addEventListener("animation_end", function() {
         tile.classList.remove("falling", "rotating");
@@ -143,9 +142,12 @@ function setChip() {
 
     r -= 1; //Updates the row height for the column
     curCols[c] = r; //Update the array
+
     let name;
+    name = document.getElementById("name").value;
+
     socket.emit("setChip", {
-        tile: tile.id,
+        tile: tile.id, //might change back to tile.id
         curPlayer: curPlayer,
         name: name,
         board, board,
@@ -158,13 +160,14 @@ function setChip() {
 
 
 socket.on("setChip", (e) => {
-    console.log("set chip")
     let name;
-    const curPlayer = e.curPlayer;
-    const foundObj = (e.allPlayers).find(obj=>obj.p1.p1name == `${name}` || obj.p2.p2name == `${name}`)
+    name = document.getElementById("name").value;
+    
+    const currentPlay = e.curPlayer;
+    const foundObj= (e.allPlayers).find(obj => obj.p1.p1name == `${name}` || obj.p2.p2name == `${name}`);
 
-    p1id = foundObj.p1.p1move
-    p2id = foundObj.p2.p2move
+    let p1id = foundObj.p1.p1move;
+    let p2id = foundObj.p2.p2move;
 
     //switches players turns
     if ((foundObj.sum) % 2 == 0) { //player 2 turn
@@ -176,15 +179,17 @@ socket.on("setChip", (e) => {
 
     if (p1id != '') {
         document.getElementById(`${p1id}`).classList.add("red-chip")
+        // document.getElementById(`${p1id}`).disabled = true
     }
     if (p2id != '') {
-        document.getElementById(`${p1id}`).classList.add("yellow-chip")
+        document.getElementById(`${p2id}`).classList.add("yellow-chip")
+        document.getElementById(`${p2id}`).disabled = true
     }
 
-    if (curPlayer == pRed) {
+    if (currentPlay == pRed) {
         curPlayer = pYellow
     }
-    else if (curPlayer == pYellow) {
+    if (currentPlay == pYellow) {
         curPlayer = pRed
     }
 
@@ -239,23 +244,34 @@ function checkWinner() {
             }
         }
     }
+
 }
 
 function setWinner(r, c) {
     let winner = document.getElementById("winner");
 
+    
+
     //Displays text
     if (board[r][c] == pRed) {
-        winner.innerText = "Red Wins!";
+        winner = "Red";
     }
     else {
-        winner.innerText = "Yellow Wins!";
+        winner = "Yellow";
     }
+    
+    socket.emit("winner", winner);
 
     let restart = document.getElementById("restartBtn").addEventListener("click", restartGame);
     gameOver = true;
 
 }
+
+socket.on("displayWinner", winner => {
+    let display = document.getElementById("winner");
+    display.innerText = `${winner} Wins!`;
+    gameOver = true;
+})
 
 function restartGame() {
     window.location.reload(); //Reloads the page
