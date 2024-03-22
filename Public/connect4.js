@@ -42,48 +42,50 @@ window.onload = function() {
             document.getElementById("find").disabled=true
         }
     })
-
-    let clientPlayer
-
-    socket.on("find", (e)=>{
-        let allPlayersArr = e.allPlayers
-
-        document.getElementById("board").style.display="flex"
-        document.getElementById("userCont").style.display="block"
-        document.getElementById("oppNameCont").style.display="block"
-        document.getElementById("valueCont").style.display="block"
-        document.getElementById("name").style.display="none"
-        document.getElementById("find").style.display="none"
-        document.getElementById("whosTurn").style.display="block"
-        document.getElementById("whosTurn").innerText="Red's Turn"
-        document.getElementById("restartBtn").style.display="flex"
-        document.getElementById("enterName").style.display="none"
-
-        let oppName
-        let colorValue
-
-        const foundObj = allPlayersArr.find(obj=>obj.p1.p1name == `${name}` || obj.p2.p2name == `${name}`)
-
-        if (foundObj.p1.p1name == `${name}`) {
-            oppName = foundObj.p2.p2name;
-            colorValue = foundObj.p1.p1value
-            clientPlayer = pRed
-        }
-
-        else {
-            oppName = foundObj.p1.p1name
-            colorValue = foundObj.p2.p2value;
-            clientPlayer = pYellow
-        }
-
-        //Opponent name
-        document.getElementById("oppName").innerText=oppName
-
-        //user color
-        document.getElementById("colorValue").innerText=colorValue
-
-    })
 }
+
+let clientPlayer
+
+socket.on("find", (e)=>{
+    let allPlayersArr = e.allPlayers
+
+    document.getElementById("board").style.display="flex"
+    document.getElementById("userCont").style.display="block"
+    document.getElementById("oppNameCont").style.display="block"
+    document.getElementById("valueCont").style.display="block"
+    document.getElementById("name").style.display="none"
+    document.getElementById("find").style.display="none"
+    document.getElementById("whosTurn").style.display="block"
+    document.getElementById("whosTurn").innerText="Red's Turn"
+    document.getElementById("restartBtn").style.display="flex"
+    document.getElementById("enterName").style.display="none"
+
+    let oppName
+    let colorValue
+    let name 
+    name = document.getElementById("name").value
+
+    const foundObj = allPlayersArr.find(obj=>obj.p1.p1name == `${name}` || obj.p2.p2name == `${name}`)
+
+    if (foundObj.p1.p1name == `${name}`) {
+        oppName = foundObj.p2.p2name;
+        colorValue = foundObj.p1.p1value
+        clientPlayer = pRed
+    }
+
+    else {
+        oppName = foundObj.p1.p1name
+        colorValue = foundObj.p2.p2value;
+        clientPlayer = pYellow
+    }
+
+    //Opponent name
+    document.getElementById("oppName").innerText=oppName
+
+    //user color
+    document.getElementById("colorValue").innerText=colorValue
+
+})
 
 function setGame() {
     board = []
@@ -112,6 +114,9 @@ function setChip() {
         return;
     }
     
+    if (clientPlayer != curPlayer) {
+        return;
+    }
 
     let coor = this.id.split("-"); //"0-0" --> ["0", "0"]
     let r = parseInt(coor[0]);
@@ -125,8 +130,6 @@ function setChip() {
     board[r][c] = curPlayer;
     let tile = document.getElementById(r.toString() + "-" + c.toString());
     tile.classList.add("falling", "rotating");
-
-    // let tileString = r.toString() + "-" + c.toString();
 
     if (curPlayer == pRed) {
         tile.classList.add("red-chip");
@@ -156,7 +159,9 @@ function setChip() {
     })
 
     checkWinner();
+
 } //end setChip
+
 
 
 socket.on("setChip", (e) => {

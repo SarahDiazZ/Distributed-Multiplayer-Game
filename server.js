@@ -67,6 +67,9 @@ io.on("connection", (socket) =>{
             objToChange.p2.p2move = e.tile
             objToChange.sum++
         }
+        else {
+            console.log("NOT UR TURN")
+        }
         console.log("Emitting chip")
         io.emit("setChip", {
             allPlayers:playingArr,
